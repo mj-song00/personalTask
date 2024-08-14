@@ -1,0 +1,40 @@
+package com.sparta.personal_task.scheduleController;
+
+import com.sparta.personal_task.dto.ScheduleRequestDto;
+import com.sparta.personal_task.dto.ScheduleResponseDto;
+import com.sparta.personal_task.schedulService.ScheduleService;
+import com.sparta.personal_task.scheduleEntity.Schedule;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.*;
+
+
+@RestController
+@RequestMapping("/api")
+public class ScheduleController {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public ScheduleController(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @PostMapping("/addPost")
+    public ScheduleResponseDto createPost (@RequestBody ScheduleRequestDto requestDto ) {
+        ScheduleService scheduleService = new ScheduleService(jdbcTemplate);
+        return scheduleService.createPost(requestDto);
+    }
+
+    //전체조회
+//    @GetMapping("/post")
+//    public List<ScheduleResponseDto> getSchedule(){
+//        ScheduleService scheduleService = new ScheduleService(jdbcTemplate);
+//        return scheduleService.getSchedule();
+//    }
+
+    @GetMapping("/post/{id}")
+    public Schedule findPost(@PathVariable int id){
+        ScheduleService scheduleService = new ScheduleService(jdbcTemplate);
+        return scheduleService.getPost(id);
+    }
+
+}
