@@ -1,5 +1,6 @@
 package com.sparta.personal_task.schedulService;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.sparta.personal_task.dto.ScheduleRequestDto;
 import com.sparta.personal_task.dto.ScheduleResponseDto;
 import com.sparta.personal_task.scheduleRepository.Schedule;
@@ -108,7 +109,7 @@ public class ScheduleService {
         Schedule schedule = findById(id);
 
         if(schedule == null) {
-            throw new RuntimeException("Schedule not found with id: " + id);
+            throw new RuntimeException("이 아이디를 확인할 수 없습니다.: " + id);
         }
 
         if (!schedule.getPassword().equals(request.getPassword())) {
@@ -138,5 +139,25 @@ public class ScheduleService {
             throw new RuntimeException("여긴 어떤 에러지;; 잘 모르고 썼습니다;;", e);
         }
 
+    }
+
+    public String deletePost(int id,ScheduleRequestDto requestDto){
+        Schedule schedule = findById(id);
+
+        if(schedule == null) {
+            throw new RuntimeException("다음 아이디를 확인할 수 없습니다.: " + id);
+        }
+
+        if (!schedule.getPassword().equals(requestDto.getPassword())){
+            throw new RuntimeException("비밀번호 확인해주세요");
+        }
+
+        try{
+            String sql = "DELETE FROM post WHERE id = ?";
+            jdbcTemplate.update(sql, id);
+            return "삭제완료";
+        }catch(Error e){
+            throw new RuntimeException("여긴 어떤 에러지;; 잘 모르고 썼습니다;;", e);
+        }
     }
 }
