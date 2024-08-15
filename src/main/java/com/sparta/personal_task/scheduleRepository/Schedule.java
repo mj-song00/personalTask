@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Schedule {
+    private int id;
     private String contents;
     private String manager;
     private String password;

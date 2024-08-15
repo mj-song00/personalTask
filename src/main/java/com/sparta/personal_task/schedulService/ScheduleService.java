@@ -24,7 +24,7 @@ public class ScheduleService {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public ScheduleResponseDto createPost(ScheduleRequestDto requestDto){
+    public ScheduleResponseDto createPost(ScheduleRequestDto requestDto) {
         Schedule schedule = new Schedule(requestDto);
 
         //DB 저장
@@ -35,7 +35,7 @@ public class ScheduleService {
         schedule.setCreatedAt(createAt);
 
         String sql = "INSERT INTO post (contents, manager, password, createdAt) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update( con -> {
+        jdbcTemplate.update(con -> {
                     PreparedStatement preparedStatement = con.prepareStatement(sql,
                             Statement.RETURN_GENERATED_KEYS);
 
@@ -54,36 +54,38 @@ public class ScheduleService {
         return scheduleResponseDto;
     }
 
-    private Schedule findById(int id){
+    private Schedule findById(int id) {
         String sql = "SELECT * FROM post WHERE id = ?";
 
-        return jdbcTemplate.query(sql, resultSet ->  {
-            if (resultSet.next()){
+        return jdbcTemplate.query(sql, resultSet -> {
+            if (resultSet.next()) {
                 Schedule schedule = new Schedule();
+                schedule.setId(resultSet.getInt("id"));
                 schedule.setContents(resultSet.getString("contents"));
                 schedule.setManager(resultSet.getString("manager"));
                 schedule.setCreatedAt(resultSet.getString("createdAt"));
                 schedule.setUpdatedAt(resultSet.getString("updatedAt"));
-
                 return schedule;
-            }else {
+            } else {
                 return null;
             }
         }, id);
     }
 
-    public Schedule getPost(int id){
+    //개별조회
+    public ScheduleResponseDto getPost(int id) {
         Schedule schedule = findById(id);
 
-        if (schedule != null){
-            return schedule;
+        if (schedule != null) {
+            ScheduleResponseDto scheduleResponseDto = new ScheduleResponseDto(schedule);
+            return scheduleResponseDto;
         }
         return null;
     }
 
 
     //전체조회
-    public List<ScheduleResponseDto> getSchedule(){
+    public List<ScheduleResponseDto> getSchedule() {
         //DB 조회
         String sql = "SELECT * FROM post";
 
@@ -95,7 +97,7 @@ public class ScheduleService {
                 String manager = rs.getString("manager");
                 String createdAt = rs.getString("createdAt");
                 String updatedAt = rs.getString("updatedAt");
-                return new ScheduleResponseDto( id, contents, manager, createdAt, updatedAt);
+                return new ScheduleResponseDto(id, contents, manager, createdAt, updatedAt);
             }
         });
     }

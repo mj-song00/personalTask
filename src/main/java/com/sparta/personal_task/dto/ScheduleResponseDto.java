@@ -11,14 +11,16 @@ public class ScheduleResponseDto {
     private String createdAt;
     private String updatedAt;
 
+    //create post Dto
     public ScheduleResponseDto(Schedule schedule) {
+        this.id = schedule.getId();
         this.contents = schedule.getContents();
         this.manager = schedule.getManager();
         this.createdAt = schedule.getCreatedAt();
         this.updatedAt = schedule.getUpdatedAt();
     }
 
-    // get요청시 사용
+    // 전체조회 responseDto 사용
     public ScheduleResponseDto(int id, String contents, String manager, String createdAt, String updatedAt) {
         this.id = id;
         this.contents = contents;

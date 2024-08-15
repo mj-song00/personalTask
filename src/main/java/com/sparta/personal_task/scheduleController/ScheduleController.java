@@ -3,9 +3,10 @@ package com.sparta.personal_task.scheduleController;
 import com.sparta.personal_task.dto.ScheduleRequestDto;
 import com.sparta.personal_task.dto.ScheduleResponseDto;
 import com.sparta.personal_task.schedulService.ScheduleService;
-import com.sparta.personal_task.scheduleRepository.Schedule;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -25,17 +26,19 @@ public class ScheduleController {
     }
 
     //전체조회
-//    @GetMapping("/post")
-//    public List<ScheduleResponseDto> getSchedule(){
-//        ScheduleService scheduleService = new ScheduleService(jdbcTemplate);
-//        return scheduleService.getSchedule();
-//    }
+    @GetMapping("/post")
+    public List<ScheduleResponseDto> getSchedule(){
+        ScheduleService scheduleService = new ScheduleService(jdbcTemplate);
+        return scheduleService.getSchedule();
+    }
 
     // 개별조회
     @GetMapping("/post/{id}")
-    public Schedule findPost(@PathVariable int id){
+    public ScheduleResponseDto findPost(@PathVariable int id){
         ScheduleService scheduleService = new ScheduleService(jdbcTemplate);
         return scheduleService.getPost(id);
     }
+
+
 
 }
