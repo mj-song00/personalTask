@@ -142,6 +142,7 @@ public class ScheduleService {
 
     }
 
+    //일정 삭제
     public String deletePost(int id,ScheduleRequestDto requestDto){
         Schedule schedule = findById(id);
 
@@ -150,7 +151,7 @@ public class ScheduleService {
         }
 
         if (!schedule.getPassword().equals(requestDto.getPassword())){
-            throw new RuntimeException("비밀번호 확인해주세요");
+            throw new RuntimeException("비밀번호를 확인해주세요");
         }
 
         try{
