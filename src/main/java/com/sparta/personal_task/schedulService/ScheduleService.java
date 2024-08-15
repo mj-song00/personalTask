@@ -61,6 +61,7 @@ public class ScheduleService {
             if (resultSet.next()) {
                 Schedule schedule = new Schedule();
                 schedule.setId(resultSet.getInt("id"));
+                schedule.setPassword(resultSet.getString("password"));
                 schedule.setContents(resultSet.getString("contents"));
                 schedule.setManager(resultSet.getString("manager"));
                 schedule.setCreatedAt(resultSet.getString("createdAt"));
@@ -87,7 +88,7 @@ public class ScheduleService {
     //전체조회
     public List<ScheduleResponseDto> getSchedule() {
         //DB 조회
-        String sql = "SELECT * FROM post";
+        String sql = "SELECT * FROM post order by updatedAt desc";
 
         return jdbcTemplate.query(sql, new RowMapper<ScheduleResponseDto>() {
             @Override
@@ -100,5 +101,42 @@ public class ScheduleService {
                 return new ScheduleResponseDto(id, contents, manager, createdAt, updatedAt);
             }
         });
+    }
+
+    //일정 수정
+    public ScheduleResponseDto updatePost(int id, ScheduleRequestDto request) {
+        Schedule schedule = findById(id);
+
+        if(schedule == null) {
+            throw new RuntimeException("Schedule not found with id: " + id);
+        }
+
+        if (!schedule.getPassword().equals(request.getPassword())) {
+            throw new RuntimeException("비밀번호 확인해주세요");
+        }
+
+        try {
+            LocalDate date = LocalDate.now();
+            String updatedAt = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            schedule.setUpdatedAt(updatedAt);
+
+            String sql = "UPDATE post SET contents = ?, manager = ?, updatedAt = ? WHERE id = ?";
+            jdbcTemplate.update(sql,
+                    request.getContents(),
+                    request.getManager(),
+                    updatedAt,
+                    id);
+
+
+            //update된 DB값 반환
+            Schedule newSchedule = findById(id);
+
+            ScheduleResponseDto scheduleResponseDto = new ScheduleResponseDto(newSchedule);
+            return scheduleResponseDto;
+
+        } catch (Exception e) {
+            throw new RuntimeException("여긴 어떤 에러지;; 잘 모르고 썼습니다;;", e);
+        }
+
     }
 }

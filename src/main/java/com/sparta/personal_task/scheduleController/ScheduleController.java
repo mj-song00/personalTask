@@ -39,6 +39,12 @@ public class ScheduleController {
         return scheduleService.getPost(id);
     }
 
+    // 일정 수정
+    @PutMapping("/post/{id}")
+    public ScheduleResponseDto updatePost(@PathVariable int id, @RequestBody ScheduleRequestDto requestDto) {
+        ScheduleService scheduleService = new ScheduleService(jdbcTemplate);
+        return scheduleService.updatePost(id, requestDto);
 
+    }
 
 }
