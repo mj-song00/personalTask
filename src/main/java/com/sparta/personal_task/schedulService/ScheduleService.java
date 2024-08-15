@@ -1,6 +1,5 @@
 package com.sparta.personal_task.schedulService;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.sparta.personal_task.dto.ScheduleRequestDto;
 import com.sparta.personal_task.dto.ScheduleResponseDto;
 import com.sparta.personal_task.scheduleRepository.Schedule;
@@ -31,11 +30,12 @@ public class ScheduleService {
         //DB 저장
         KeyHolder keyHolder = new GeneratedKeyHolder(); // 기본 키를 반환받기 위한 객체
 
-        LocalDate date = LocalDate.now();
-        String createAt = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        schedule.setCreatedAt(createAt);
+        LocalDate localDate = LocalDate.now();
+        String date = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        schedule.setCreatedAt(date);
+        schedule.setUpdatedAt(date);
 
-        String sql = "INSERT INTO post (contents, manager, password, createdAt) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO post (contents, manager, password, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)";
         jdbcTemplate.update(con -> {
                     PreparedStatement preparedStatement = con.prepareStatement(sql,
                             Statement.RETURN_GENERATED_KEYS);
@@ -44,6 +44,7 @@ public class ScheduleService {
                     preparedStatement.setString(2, schedule.getManager());
                     preparedStatement.setString(3, schedule.getPassword());
                     preparedStatement.setString(4, schedule.getCreatedAt());
+                    preparedStatement.setString(5, schedule.getUpdatedAt());
 
                     return preparedStatement;
                 },
