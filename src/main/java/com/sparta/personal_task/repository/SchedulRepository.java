@@ -1,5 +1,6 @@
 package com.sparta.personal_task.repository;
 
+import com.sparta.personal_task.dto.ScheduleRequestDto;
 import com.sparta.personal_task.dto.ScheduleResponseDto;
 import com.sparta.personal_task.scheduleEntity.Schedule;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,7 +12,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
+
 
 public class SchedulRepository {
     private final JdbcTemplate jdbcTemplate;
@@ -41,7 +46,48 @@ public class SchedulRepository {
         return schedule;
     }
 
-    private Schedule findById(int id) {
+
+
+    public List<ScheduleResponseDto> getSchedule() {
+        //DB 조회
+        String sql = "SELECT * FROM post order by updatedAt desc";
+
+        return jdbcTemplate.query(sql, new RowMapper<ScheduleResponseDto>() {
+            @Override
+            public ScheduleResponseDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+                int id = rs.getInt("id");
+                String contents = rs.getString("contents");
+                String manager = rs.getString("manager");
+                String createdAt = rs.getString("createdAt");
+                String updatedAt = rs.getString("updatedAt");
+                return new ScheduleResponseDto(id, contents, manager, createdAt, updatedAt);
+            }
+        });
+    }
+
+
+    public Schedule update (int id, ScheduleRequestDto request, String updatedAt){
+        ;
+
+        String sql = "UPDATE post SET contents = ?, manager = ?, updatedAt = ? WHERE id = ?";
+        jdbcTemplate.update(sql,
+                request.getContents(),
+                request.getManager(),
+                updatedAt,
+                id);
+
+        return null;
+    }
+
+    public String delete(int id) {
+        String sql = "DELETE FROM post WHERE id = ?";
+        jdbcTemplate.update(sql, id);
+
+        return null;
+    }
+
+
+    public Schedule findById(int id) {
         String sql = "SELECT * FROM post WHERE id = ?";
 
         return jdbcTemplate.query(sql, resultSet -> {
@@ -60,20 +106,6 @@ public class SchedulRepository {
         }, id);
     }
 
-    public List<ScheduleResponseDto> getSchedule() {
-        //DB 조회
-        String sql = "SELECT * FROM post order by updatedAt desc";
 
-        return jdbcTemplate.query(sql, new RowMapper<ScheduleResponseDto>() {
-            @Override
-            public ScheduleResponseDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-                int id = rs.getInt("id");
-                String contents = rs.getString("contents");
-                String manager = rs.getString("manager");
-                String createdAt = rs.getString("createdAt");
-                String updatedAt = rs.getString("updatedAt");
-                return new ScheduleResponseDto(id, contents, manager, createdAt, updatedAt);
-            }
-        });
-    }
+
 }

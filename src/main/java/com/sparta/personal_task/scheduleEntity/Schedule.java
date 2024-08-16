@@ -21,4 +21,6 @@ public class Schedule {
         this.manager = requestDto.getManager();
         this.password = requestDto.getPassword();
     }
+
+
 }

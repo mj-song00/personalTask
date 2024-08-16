@@ -4,10 +4,12 @@ import com.sparta.personal_task.dto.ScheduleRequestDto;
 import com.sparta.personal_task.dto.ScheduleResponseDto;
 import com.sparta.personal_task.repository.SchedulRepository;
 import com.sparta.personal_task.scheduleEntity.Schedule;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -47,8 +49,9 @@ public class ScheduleService {
 
     //개별조회
     public ScheduleResponseDto getPost(int id) {
-        Schedule schedule = findById(id);
+        SchedulRepository schedulRepository = new SchedulRepository(jdbcTemplate);
 
+        Schedule schedule = schedulRepository.findById(id);
         if (schedule != null) {
             ScheduleResponseDto scheduleResponseDto = new ScheduleResponseDto(schedule);
             return scheduleResponseDto;
@@ -65,8 +68,9 @@ public class ScheduleService {
 
     //일정 수정
     public ScheduleResponseDto updatePost(int id, ScheduleRequestDto request) {
-        Schedule schedule = findById(id);
+        SchedulRepository schedulRepository = new SchedulRepository(jdbcTemplate);
 
+        Schedule schedule = schedulRepository.findById(id);
         if (schedule == null) {
             throw new RuntimeException("이 아이디를 확인할 수 없습니다.: " + id);
         }
@@ -80,16 +84,11 @@ public class ScheduleService {
             String updatedAt = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             schedule.setUpdatedAt(updatedAt);
 
-            String sql = "UPDATE post SET contents = ?, manager = ?, updatedAt = ? WHERE id = ?";
-            jdbcTemplate.update(sql,
-                    request.getContents(),
-                    request.getManager(),
-                    updatedAt,
-                    id);
+            schedulRepository.update( id, request, updatedAt );
 
 
             //update된 DB값 반환
-            Schedule newSchedule = findById(id);
+            Schedule newSchedule =schedulRepository.findById(id);
 
             ScheduleResponseDto scheduleResponseDto = new ScheduleResponseDto(newSchedule);
             return scheduleResponseDto;
@@ -102,7 +101,9 @@ public class ScheduleService {
 
     //일정 삭제
     public String deletePost(int id, ScheduleRequestDto requestDto) {
-        Schedule schedule = findById(id);
+        SchedulRepository schedulRepository = new SchedulRepository(jdbcTemplate);
+
+        Schedule schedule = schedulRepository.findById(id);
 
         if (schedule == null) {
             throw new RuntimeException("다음 아이디를 확인할 수 없습니다.: " + id);
@@ -113,11 +114,11 @@ public class ScheduleService {
         }
 
         try {
-            String sql = "DELETE FROM post WHERE id = ?";
-            jdbcTemplate.update(sql, id);
+            schedulRepository.delete(id);
             return "삭제완료";
         } catch (Error e) {
             throw new RuntimeException("error =", e);
         }
+
     }
 }
