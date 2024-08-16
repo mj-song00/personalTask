@@ -137,7 +137,7 @@ public class ScheduleService {
             return scheduleResponseDto;
 
         } catch (Exception e) {
-            throw new RuntimeException("여긴 어떤 에러지;; 잘 모르고 썼습니다;;", e);
+            throw new RuntimeException("error = ", e);
         }
 
     }
@@ -159,7 +159,7 @@ public class ScheduleService {
             jdbcTemplate.update(sql, id);
             return "삭제완료";
         }catch(Error e){
-            throw new RuntimeException("여긴 어떤 에러지;; 잘 모르고 썼습니다;;", e);
+            throw new RuntimeException("error =", e);
         }
     }
 }
