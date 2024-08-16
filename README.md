@@ -1,7 +1,8 @@
 
 
 ## API 
-<img width="1250" alt="스크린샷 2024-08-15 오후 9 04 56" src="https://github.com/user-attachments/assets/0168bc22-1c53-42dc-8e90-856a5d9dc9e7">
+<img width="1177" alt="스크린샷 2024-08-16 오전 10 07 17" src="https://github.com/user-attachments/assets/87dcc80e-adaf-46cd-8e5a-237fd51664c9">
+
 
 
 ## ERD
