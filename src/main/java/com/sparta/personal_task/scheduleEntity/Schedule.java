@@ -1,4 +1,4 @@
-package com.sparta.personal_task.scheduleRepository;
+package com.sparta.personal_task.scheduleEntity;
 
 import com.sparta.personal_task.dto.ScheduleRequestDto;
 import lombok.Getter;

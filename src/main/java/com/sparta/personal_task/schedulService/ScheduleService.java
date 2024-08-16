@@ -2,7 +2,8 @@ package com.sparta.personal_task.schedulService;
 
 import com.sparta.personal_task.dto.ScheduleRequestDto;
 import com.sparta.personal_task.dto.ScheduleResponseDto;
-import com.sparta.personal_task.scheduleRepository.Schedule;
+import com.sparta.personal_task.repository.SchedulRepository;
+import com.sparta.personal_task.scheduleEntity.Schedule;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -27,28 +28,17 @@ public class ScheduleService {
     public ScheduleResponseDto createPost(ScheduleRequestDto requestDto) {
         Schedule schedule = new Schedule(requestDto);
 
-        //DB 저장
-        KeyHolder keyHolder = new GeneratedKeyHolder(); // 기본 키를 반환받기 위한 객체
+
 
         LocalDate localDate = LocalDate.now();
         String date = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         schedule.setCreatedAt(date);
         schedule.setUpdatedAt(date);
 
-        String sql = "INSERT INTO post (contents, manager, password, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)";
-        jdbcTemplate.update(con -> {
-                    PreparedStatement preparedStatement = con.prepareStatement(sql,
-                            Statement.RETURN_GENERATED_KEYS);
+        SchedulRepository schedulRepository = new SchedulRepository(jdbcTemplate);
+        Schedule  saveSchedule =  schedulRepository.save(schedule);
 
-                    preparedStatement.setString(1, schedule.getContents());
-                    preparedStatement.setString(2, schedule.getManager());
-                    preparedStatement.setString(3, schedule.getPassword());
-                    preparedStatement.setString(4, schedule.getCreatedAt());
-                    preparedStatement.setString(5, schedule.getUpdatedAt());
 
-                    return preparedStatement;
-                },
-                keyHolder);
 
 
         ScheduleResponseDto scheduleResponseDto = new ScheduleResponseDto(schedule);
