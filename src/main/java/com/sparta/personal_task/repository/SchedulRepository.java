@@ -1,12 +1,17 @@
 package com.sparta.personal_task.repository;
 
+import com.sparta.personal_task.dto.ScheduleResponseDto;
 import com.sparta.personal_task.scheduleEntity.Schedule;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 public class SchedulRepository {
     private final JdbcTemplate jdbcTemplate;
@@ -34,5 +39,41 @@ public class SchedulRepository {
                 },
                 keyHolder);
         return schedule;
+    }
+
+    private Schedule findById(int id) {
+        String sql = "SELECT * FROM post WHERE id = ?";
+
+        return jdbcTemplate.query(sql, resultSet -> {
+            if (resultSet.next()) {
+                Schedule schedule = new Schedule();
+                schedule.setId(resultSet.getInt("id"));
+                schedule.setPassword(resultSet.getString("password"));
+                schedule.setContents(resultSet.getString("contents"));
+                schedule.setManager(resultSet.getString("manager"));
+                schedule.setCreatedAt(resultSet.getString("createdAt"));
+                schedule.setUpdatedAt(resultSet.getString("updatedAt"));
+                return schedule;
+            } else {
+                return null;
+            }
+        }, id);
+    }
+
+    public List<ScheduleResponseDto> getSchedule() {
+        //DB 조회
+        String sql = "SELECT * FROM post order by updatedAt desc";
+
+        return jdbcTemplate.query(sql, new RowMapper<ScheduleResponseDto>() {
+            @Override
+            public ScheduleResponseDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+                int id = rs.getInt("id");
+                String contents = rs.getString("contents");
+                String manager = rs.getString("manager");
+                String createdAt = rs.getString("createdAt");
+                String updatedAt = rs.getString("updatedAt");
+                return new ScheduleResponseDto(id, contents, manager, createdAt, updatedAt);
+            }
+        });
     }
 }

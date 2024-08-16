@@ -43,24 +43,7 @@ public class ScheduleService {
         return scheduleResponseDto;
     }
 
-    private Schedule findById(int id) {
-        String sql = "SELECT * FROM post WHERE id = ?";
 
-        return jdbcTemplate.query(sql, resultSet -> {
-            if (resultSet.next()) {
-                Schedule schedule = new Schedule();
-                schedule.setId(resultSet.getInt("id"));
-                schedule.setPassword(resultSet.getString("password"));
-                schedule.setContents(resultSet.getString("contents"));
-                schedule.setManager(resultSet.getString("manager"));
-                schedule.setCreatedAt(resultSet.getString("createdAt"));
-                schedule.setUpdatedAt(resultSet.getString("updatedAt"));
-                return schedule;
-            } else {
-                return null;
-            }
-        }, id);
-    }
 
     //개별조회
     public ScheduleResponseDto getPost(int id) {
@@ -76,20 +59,8 @@ public class ScheduleService {
 
     //전체조회
     public List<ScheduleResponseDto> getSchedule() {
-        //DB 조회
-        String sql = "SELECT * FROM post order by updatedAt desc";
-
-        return jdbcTemplate.query(sql, new RowMapper<ScheduleResponseDto>() {
-            @Override
-            public ScheduleResponseDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-                int id = rs.getInt("id");
-                String contents = rs.getString("contents");
-                String manager = rs.getString("manager");
-                String createdAt = rs.getString("createdAt");
-                String updatedAt = rs.getString("updatedAt");
-                return new ScheduleResponseDto(id, contents, manager, createdAt, updatedAt);
-            }
-        });
+       SchedulRepository schedulRepository = new SchedulRepository(jdbcTemplate);
+       return schedulRepository.getSchedule();
     }
 
     //일정 수정
