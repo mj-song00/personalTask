@@ -29,19 +29,16 @@ public class ScheduleService {
         Schedule schedule = new Schedule(requestDto);
 
 
-
         LocalDate localDate = LocalDate.now();
         String date = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         schedule.setCreatedAt(date);
         schedule.setUpdatedAt(date);
 
         SchedulRepository schedulRepository = new SchedulRepository(jdbcTemplate);
-        Schedule  saveSchedule =  schedulRepository.save(schedule);
+        Schedule saveSchedule = schedulRepository.save(schedule);
 
 
-
-
-        ScheduleResponseDto scheduleResponseDto = new ScheduleResponseDto(schedule);
+        ScheduleResponseDto scheduleResponseDto = new ScheduleResponseDto(saveSchedule);
 
         return scheduleResponseDto;
     }
@@ -99,7 +96,7 @@ public class ScheduleService {
     public ScheduleResponseDto updatePost(int id, ScheduleRequestDto request) {
         Schedule schedule = findById(id);
 
-        if(schedule == null) {
+        if (schedule == null) {
             throw new RuntimeException("이 아이디를 확인할 수 없습니다.: " + id);
         }
 
@@ -133,22 +130,22 @@ public class ScheduleService {
     }
 
     //일정 삭제
-    public String deletePost(int id,ScheduleRequestDto requestDto){
+    public String deletePost(int id, ScheduleRequestDto requestDto) {
         Schedule schedule = findById(id);
 
-        if(schedule == null) {
+        if (schedule == null) {
             throw new RuntimeException("다음 아이디를 확인할 수 없습니다.: " + id);
         }
 
-        if (!schedule.getPassword().equals(requestDto.getPassword())){
+        if (!schedule.getPassword().equals(requestDto.getPassword())) {
             throw new RuntimeException("비밀번호를 확인해주세요");
         }
 
-        try{
+        try {
             String sql = "DELETE FROM post WHERE id = ?";
             jdbcTemplate.update(sql, id);
             return "삭제완료";
-        }catch(Error e){
+        } catch (Error e) {
             throw new RuntimeException("error =", e);
         }
     }
